@@ -23,11 +23,15 @@ const ParticleAnimation: React.FC<ParticleAnimationProps> = ({ isCompassMode, on
       p.setup = () => {
         const canvas = p.createCanvas(p.windowWidth, p.windowHeight);
         canvas.parent(containerRef.current!);
+        p.colorMode(p.RGB, 255, 255, 255, 255);
+        p.blendMode(p.ADD); // Set blend mode for additive blending of trails
         systemRef.current?.setup();
       };
       
       // Draw function
       p.draw = () => {
+        p.clear();
+        p.background(10, 15, 30, 255);
         systemRef.current?.update(isCompassMode);
       };
       
