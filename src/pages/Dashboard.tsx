@@ -47,6 +47,21 @@ const Dashboard = () => {
       {/* Main Content */}
       <main className="flex-1 py-8 px-6">
         <div className="max-w-7xl mx-auto">
+          {/* Introduction Message */}
+          <Card className="mb-8 shadow-sm border-0">
+            <CardContent className="p-6">
+              <h2 className="text-xl font-medium text-[#1A1F2C] mb-3">Welcome to your AI Readiness Dashboard</h2>
+              <p className="text-[#4A5568] leading-relaxed">
+                What's up Kyle. Excited to have you try this out, figure you can use the voice agent while sitting in the 5. 
+                You don't need to, but you can also throw in some documents to the upload document button. 
+                The voice agent can reference any documents and we'll use those to create the AI readiness score and help create the best market opportunities. 
+                We're going to look for the easiest AI functions you can deploy with the highest ROI. 
+                By the way, when I say "we" I'm talking about me, a series of automated agents (Claude, GPT-4.5, Gemini), and a handful of developers more nerdy than me.
+                Cheers, Mike
+              </p>
+            </CardContent>
+          </Card>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Voice Agent Card */}
             <Card className="shadow-sm border-0">
