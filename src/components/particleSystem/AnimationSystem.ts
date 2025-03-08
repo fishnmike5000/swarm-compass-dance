@@ -12,7 +12,6 @@ export class AnimationSystem {
   currentFrame: number = 0;
   transitionStartFrame: number = 0;
   isTransitioning: boolean = false;
-  wasCompassMode: boolean = false;
   onReadyCallback: () => void;
   centerPoint: p5.Vector;
 
@@ -55,9 +54,8 @@ export class AnimationSystem {
     // Create square points
     this.compassPoints = generateCompassPoints(this.p, this.config);
     
-    // Create particles with more randomness in initial positions
+    // Create particles
     for (let i = 0; i < this.config.particleCount; i++) {
-      // More random distribution by using random points throughout the canvas
       this.particles.push(new Particle(
         this.p,
         this.p.random(this.p.width),
@@ -74,19 +72,12 @@ export class AnimationSystem {
     this.p.background(10, 15, 30, 255);
     this.currentFrame++;
     
-    // Detect mode change without resetting particles if they're already in transition
-    const modeChanged = isCompassMode !== this.wasCompassMode;
-    this.wasCompassMode = isCompassMode;
-    
-    // Check if we should start transition
-    if (modeChanged && isCompassMode && !this.isTransitioning) {
+    // Check if we should start or stop transition
+    if (isCompassMode && !this.isTransitioning) {
       this.startTransition();
-    } 
-    // Check if transition should be stopped
-    else if (this.isTransitioning && 
-             this.currentFrame - this.transitionStartFrame > this.config.transitionDuration) {
-      // Only stop transition when timer completes
-      this.isTransitioning = false;
+    } else if (!isCompassMode && this.isTransitioning && 
+              this.currentFrame - this.transitionStartFrame > this.config.transitionDuration) {
+      this.stopTransition();
     }
     
     // Update and display particles
@@ -105,22 +96,16 @@ export class AnimationSystem {
           const steeringMultiplier = this.p.map(progress, 0, 1, 1, 5);
           particle.moveToTarget(this.p, this.currentFrame, steeringMultiplier);
           
-          // Adjust trail length based on speed/progress
-          particle.trailLength = Math.round(this.p.map(progress, 0, 1, 5, 20));
-          
           // Increase speed and size based on progress for warp effect
           particle.maxSpeed = this.p.map(progress, 0, 1, this.config.maxVelocity, this.config.maxVelocity * 3);
           particle.size = particle.baseSize * (1 + progress * 2); // Grow particles as they approach center
         }
       } else if (!isCompassMode) {
         // In flow field mode
-        particle.trailLength = 5; // Shorter trails in normal mode
         particle.followFlowField(this.p, this.flowField, this.config);
         particle.edges(this.p);
       } else {
         // In compass mode (after transition)
-        particle.trailLength = 15; // Medium trails in compass mode
-        
         // Keep particles near center with some random movement
         if (this.p.random(1) < 0.02) { // Occasionally give particles a push
           const randomAngle = this.p.random(this.p.TWO_PI);
@@ -178,19 +163,27 @@ export class AnimationSystem {
       );
       toCenter.normalize();
       toCenter.mult(this.config.maxVelocity * 0.5);
-      particle.velocity.add(toCenter);
+      particle.velocity = toCenter;
     });
   }
 
   stopTransition() {
     this.isTransitioning = false;
     
-    // Reset particle properties but don't change their positions
+    // Scatter particles from center with high velocity
     this.particles.forEach(particle => {
       particle.targetPosition = null;
       // Reset particle properties
       particle.maxSpeed = this.p.random(this.config.minVelocity, this.config.maxVelocity);
       particle.size = particle.baseSize;
+      
+      // Give particles explosive velocity outward from center
+      const angle = this.p.random(this.p.TWO_PI);
+      const speed = this.p.random(this.config.minVelocity * 5, this.config.maxVelocity * 5);
+      particle.velocity = this.p.createVector(
+        Math.cos(angle) * speed,
+        Math.sin(angle) * speed
+      );
     });
   }
 }
