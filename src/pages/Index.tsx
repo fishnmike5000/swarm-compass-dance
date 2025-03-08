@@ -1,11 +1,13 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ParticleAnimation from '@/components/ParticleAnimation';
 import TransitionButton from '@/components/TransitionButton';
 
 const Index = () => {
   const [isCompassMode, setIsCompassMode] = useState(false);
   const [isAnimationReady, setIsAnimationReady] = useState(false);
+  const navigate = useNavigate();
   
   const handleTransition = () => {
     setIsCompassMode(prev => !prev);
@@ -14,6 +16,21 @@ const Index = () => {
   const handleAnimationReady = () => {
     setIsAnimationReady(true);
   };
+
+  // Effect to redirect after 5 seconds when animation is complete
+  useEffect(() => {
+    let redirectTimer: number;
+    
+    if (isCompassMode) {
+      redirectTimer = window.setTimeout(() => {
+        navigate('/signup');
+      }, 5000); // 5 seconds
+    }
+    
+    return () => {
+      if (redirectTimer) clearTimeout(redirectTimer);
+    };
+  }, [isCompassMode, navigate]);
 
   return (
     <div className="relative h-screen w-full overflow-hidden">
