@@ -1,3 +1,4 @@
+
 import p5 from 'p5';
 import { AnimationConfig, ParticleState } from './types';
 
@@ -15,9 +16,10 @@ export class Particle {
 
   constructor(p: p5, x: number, y: number, config: AnimationConfig) {
     this.position = p.createVector(x, y);
+    // More random initial velocity for better distribution
     this.velocity = p.createVector(
-      p.random(-config.minVelocity, config.minVelocity),
-      p.random(-config.minVelocity, config.minVelocity)
+      p.random(-config.minVelocity * 2, config.minVelocity * 2),
+      p.random(-config.minVelocity * 2, config.minVelocity * 2)
     );
     this.acceleration = p.createVector(0, 0);
     this.targetPosition = null;
