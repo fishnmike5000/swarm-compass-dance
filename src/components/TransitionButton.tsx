@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 interface TransitionButtonProps {
   isCompassMode: boolean;
@@ -38,16 +38,12 @@ const TransitionButton: React.FC<TransitionButtonProps> = ({
         !isAnimationReady && 'opacity-50 cursor-not-allowed',
         className
       )}
-      aria-label={isCompassMode ? 'Return to flow field' : 'Access Now'}
+      aria-label="Access Now"
     >
       <span className="relative z-10 text-white text-base">
-        {isCompassMode ? 'Return to Flow' : 'Access Now'}
+        Access Now
       </span>
-      {isCompassMode ? (
-        <ArrowRight className="w-4 h-4 relative z-10" />
-      ) : (
-        <Sparkles className="w-5 h-5 relative z-10" />
-      )}
+      <Sparkles className="w-5 h-5 relative z-10" />
     </button>
   );
 };
