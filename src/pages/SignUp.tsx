@@ -13,6 +13,8 @@ const SignUp = () => {
     e.preventDefault();
     // In a real app, you would handle form submission here
     console.log('Form submitted');
+    // Redirect to dashboard after form submission
+    navigate('/dashboard');
   };
   
   return (
