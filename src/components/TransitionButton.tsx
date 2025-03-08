@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { ArrowRight, RotateCw } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 
 interface TransitionButtonProps {
   isCompassMode: boolean;
@@ -22,19 +22,22 @@ const TransitionButton: React.FC<TransitionButtonProps> = ({
       disabled={!isAnimationReady}
       className={cn(
         'transition-button relative flex items-center gap-2 z-10',
+        'bg-black/20 backdrop-blur-sm px-4 py-2 rounded-full',
+        'hover:bg-black/30 transition-all duration-300',
+        'border border-white/20 text-white',
         'animate-fade-in opacity-0',
         !isAnimationReady && 'opacity-50 cursor-not-allowed',
         className
       )}
-      aria-label={isCompassMode ? 'Return to flow field' : 'Form square'}
+      aria-label={isCompassMode ? 'Return to flow field' : 'Warp speed'}
     >
       <span className="relative z-10">
-        {isCompassMode ? 'Return to Flow' : 'Form Square'}
+        {isCompassMode ? 'Return to Flow' : 'Warp Speed'}
       </span>
       {isCompassMode ? (
-        <RotateCw className="w-4 h-4 relative z-10" />
-      ) : (
         <ArrowRight className="w-4 h-4 relative z-10" />
+      ) : (
+        <Sparkles className="w-4 h-4 relative z-10" />
       )}
     </button>
   );

@@ -42,7 +42,7 @@ export class Particle {
     }
   }
   
-  moveToTarget(p: p5, currentFrame: number) {
+  moveToTarget(p: p5, currentFrame: number, steeringMultiplier: number = 1) {
     if (this.targetPosition) {
       const dir = p5.Vector.sub(this.targetPosition, this.position);
       const distance = dir.mag();
@@ -53,7 +53,8 @@ export class Particle {
         distance,
         0, p.width * 0.5,
         0.01, 0.2
-      );
+      ) * steeringMultiplier; // Apply multiplier for warp effect
+      
       dir.mult(steeringStrength);
       
       this.applyForce(dir);

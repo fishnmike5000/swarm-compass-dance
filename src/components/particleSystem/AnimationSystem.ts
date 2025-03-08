@@ -13,10 +13,12 @@ export class AnimationSystem {
   transitionStartFrame: number = 0;
   isTransitioning: boolean = false;
   onReadyCallback: () => void;
+  centerPoint: p5.Vector;
 
   constructor(p: p5, onReady: () => void) {
     this.p = p;
     this.onReadyCallback = onReady;
+    this.centerPoint = p.createVector(0, 0); // Will be properly set in setup
 
     // Animation configuration - will be initialized in setup
     this.config = {
@@ -24,7 +26,7 @@ export class AnimationSystem {
       particleSize: 3,
       flowFieldResolution: 20,
       flowFieldStrength: 0.1,
-      transitionDuration: 120, // frames
+      transitionDuration: 120, // frames (approx 2 seconds at 60fps)
       minVelocity: 0.1,
       maxVelocity: 1.5,
       particleColor: p.color(255, 255, 255, 200),
@@ -44,6 +46,9 @@ export class AnimationSystem {
     
     // Initialize flow field
     this.flowField = generateFlowField(this.p, this.config);
+    
+    // Set center point
+    this.centerPoint = this.p.createVector(this.p.width / 2, this.p.height / 2);
     
     // Create square points
     this.compassPoints = generateCompassPoints(this.p, this.config);
@@ -79,32 +84,51 @@ export class AnimationSystem {
       const particle = this.particles[i];
       
       if (this.isTransitioning) {
-        // During transition, gradually move towards square formation
+        // During transition, all particles move toward center
         const progress = (this.currentFrame - this.transitionStartFrame) / this.config.transitionDuration;
+        
         if (progress <= 1) {
-          // First 4 particles go to the square corners
-          if (i < 4) {
-            particle.targetPosition = this.compassPoints[i];
-            particle.moveToTarget(this.p, this.currentFrame);
-          } else {
-            // Other particles move randomly
-            particle.followFlowField(this.p, this.flowField, this.config);
-            particle.edges(this.p);
-          }
+          // All particles zip toward the center
+          particle.targetPosition = this.centerPoint;
+          
+          // Increase steering strength as transition progresses for "warp" effect
+          const steeringMultiplier = this.p.map(progress, 0, 1, 1, 5);
+          particle.moveToTarget(this.p, this.currentFrame, steeringMultiplier);
+          
+          // Increase speed and size based on progress for warp effect
+          particle.maxSpeed = this.p.map(progress, 0, 1, this.config.maxVelocity, this.config.maxVelocity * 3);
+          particle.size = particle.baseSize * (1 + progress * 2); // Grow particles as they approach center
         }
       } else if (!isCompassMode) {
         // In flow field mode
         particle.followFlowField(this.p, this.flowField, this.config);
         particle.edges(this.p);
       } else {
-        // In full square mode
-        if (i < 4) {
-          particle.targetPosition = this.compassPoints[i];
-          particle.moveToTarget(this.p, this.currentFrame);
-        } else {
-          // Other particles continue to move freely
-          particle.followFlowField(this.p, this.flowField, this.config);
-          particle.edges(this.p);
+        // In compass mode (after transition)
+        // Keep particles near center with some random movement
+        if (this.p.random(1) < 0.02) { // Occasionally give particles a push
+          const randomAngle = this.p.random(this.p.TWO_PI);
+          const randomForce = this.p.createVector(
+            Math.cos(randomAngle) * 0.05,
+            Math.sin(randomAngle) * 0.05
+          );
+          particle.applyForce(randomForce);
+        }
+        
+        // Make particles orbit around center if they get too far
+        const distToCenter = this.p.dist(
+          particle.position.x, particle.position.y, 
+          this.centerPoint.x, this.centerPoint.y
+        );
+        
+        if (distToCenter > 100) {
+          const toCenter = this.p.createVector(
+            this.centerPoint.x - particle.position.x,
+            this.centerPoint.y - particle.position.y
+          );
+          toCenter.normalize();
+          toCenter.mult(0.1);
+          particle.applyForce(toCenter);
         }
       }
       
@@ -114,6 +138,9 @@ export class AnimationSystem {
   }
 
   windowResized() {
+    // Update center point
+    this.centerPoint = this.p.createVector(this.p.width / 2, this.p.height / 2);
+    
     // Recalculate flow field
     this.flowField = generateFlowField(this.p, this.config);
     
@@ -125,54 +152,36 @@ export class AnimationSystem {
     this.isTransitioning = true;
     this.transitionStartFrame = this.currentFrame;
     
-    // Make sure the first 4 particles are the best candidates to form the square corners
-    // Sort particles based on their current positions to find ones closest to the target positions
-    
-    // Temporary array of particles with their distances to targets
-    const particlesWithDistances = this.particles.map((particle, index) => {
-      // Find the closest corner point to this particle
-      let minDistance = Number.MAX_VALUE;
-      let closestCornerIndex = 0;
-      
-      // Only consider the 4 corner points
-      for (let i = 0; i < 4; i++) {
-        const cornerPoint = this.compassPoints[i];
-        const dist = p5.Vector.dist(particle.position, cornerPoint);
-        if (dist < minDistance) {
-          minDistance = dist;
-          closestCornerIndex = i;
-        }
-      }
-      
-      return {
-        particle,
-        distance: minDistance,
-        cornerIndex: closestCornerIndex
-      };
+    // Set all particles to head toward center
+    this.particles.forEach(particle => {
+      particle.targetPosition = this.centerPoint;
+      // Increase initial velocity toward center for more dramatic effect
+      const toCenter = this.p.createVector(
+        this.centerPoint.x - particle.position.x,
+        this.centerPoint.y - particle.position.y
+      );
+      toCenter.normalize();
+      toCenter.mult(this.config.maxVelocity * 0.5);
+      particle.velocity = toCenter;
     });
-    
-    // Sort by distance
-    particlesWithDistances.sort((a, b) => a.distance - b.distance);
-    
-    // Create a new sorted array of particles
-    this.particles = particlesWithDistances.map(item => item.particle);
-    
-    // Assign the corner targets to the first 4 particles
-    for (let i = 0; i < 4; i++) {
-      this.particles[i].targetPosition = this.compassPoints[i];
-    }
   }
 
   stopTransition() {
     this.isTransitioning = false;
     
-    // Clear target positions
+    // Scatter particles from center with high velocity
     this.particles.forEach(particle => {
       particle.targetPosition = null;
-      // Reset velocities to be more random using p5 instance
+      // Reset particle properties
+      particle.maxSpeed = this.p.random(this.config.minVelocity, this.config.maxVelocity);
+      particle.size = particle.baseSize;
+      
+      // Give particles explosive velocity outward from center
+      const angle = this.p.random(this.p.TWO_PI);
+      const speed = this.p.random(this.config.minVelocity * 5, this.config.maxVelocity * 5);
       particle.velocity = this.p.createVector(
-        this.p.random(-this.config.minVelocity, this.config.minVelocity),
-        this.p.random(-this.config.minVelocity, this.config.minVelocity)
+        Math.cos(angle) * speed,
+        Math.sin(angle) * speed
       );
     });
   }
