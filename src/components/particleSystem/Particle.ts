@@ -1,3 +1,4 @@
+
 import p5 from 'p5';
 import { AnimationConfig, ParticleState } from './types';
 
@@ -25,7 +26,7 @@ export class Particle {
     this.baseSize = p.random(config.particleSize * 0.7, config.particleSize * 1.3);
     this.size = this.baseSize;
     this.brightness = p.random(150, 255);
-    this.trailLength = 10;
+    this.trailLength = 20; // Doubled the trail length from 10 to 20
     this.trail = [];
   }
 
