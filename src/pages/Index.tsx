@@ -1,11 +1,55 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React, { useState } from 'react';
+import ParticleAnimation from '@/components/ParticleAnimation';
+import TransitionButton from '@/components/TransitionButton';
 
 const Index = () => {
+  const [isCompassMode, setIsCompassMode] = useState(false);
+  const [isAnimationReady, setIsAnimationReady] = useState(false);
+  
+  const handleTransition = () => {
+    setIsCompassMode(prev => !prev);
+  };
+  
+  const handleAnimationReady = () => {
+    setIsAnimationReady(true);
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <div className="relative h-screen w-full overflow-hidden">
+      {/* Background Animation */}
+      <ParticleAnimation 
+        isCompassMode={isCompassMode} 
+        onReady={handleAnimationReady} 
+      />
+      
+      {/* Content Overlay */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center z-10 pointer-events-none p-6">
+        <div className="max-w-xl w-full text-center">
+          <div className="space-y-6">
+            <h1 className="text-4xl md:text-5xl font-light text-white tracking-tight fade-up delay-0">
+              <span className="font-normal">Flow</span>Compass
+            </h1>
+            
+            <p className="text-white/80 max-w-md mx-auto fade-up delay-1">
+              An elegant particle system that transitions from organic flow to structured formation with mathematical precision.
+            </p>
+            
+            <div className="flex justify-center pt-4 fade-up delay-2">
+              <TransitionButton 
+                isCompassMode={isCompassMode}
+                onClick={handleTransition}
+                isAnimationReady={isAnimationReady}
+                className="pointer-events-auto"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Footer Attribution */}
+      <div className="absolute bottom-6 left-0 right-0 text-center text-white/50 text-sm fade-up delay-4">
+        <p>Minimalist design inspired by mathematical beauty</p>
       </div>
     </div>
   );
