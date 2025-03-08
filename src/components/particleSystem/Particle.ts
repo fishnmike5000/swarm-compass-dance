@@ -1,3 +1,4 @@
+
 import p5 from 'p5';
 import { AnimationConfig, ParticleState } from './types';
 
@@ -12,7 +13,6 @@ export class Particle {
   brightness: number;
   trail: p5.Vector[];
   trailLength: number;
-  maxTrailLength: number;
 
   constructor(p: p5, x: number, y: number, config: AnimationConfig) {
     this.position = p.createVector(x, y);
@@ -26,8 +26,7 @@ export class Particle {
     this.baseSize = p.random(config.particleSize * 0.7, config.particleSize * 1.3);
     this.size = this.baseSize;
     this.brightness = p.random(150, 255);
-    this.maxTrailLength = 20; // Maximum possible trail length
-    this.trailLength = 3; // Start with short trails
+    this.trailLength = 20; // Doubled the trail length from 10 to 20
     this.trail = [];
   }
 
@@ -71,23 +70,13 @@ export class Particle {
     }
   }
 
-  update(p: p5, currentFrame: number, isTransitioning: boolean = false, transitionProgress: number = 0) {
+  update(p: p5, currentFrame: number) {
     // Add current position to the trail before updating
     this.trail.push(this.position.copy());
 
-    // Dynamically adjust trail length based on velocity and transition state
-    if (isTransitioning) {
-      // During transition, increase trail length based on progress
-      this.trailLength = p.map(transitionProgress, 0, 1, 3, this.maxTrailLength);
-    } else {
-      // When not transitioning, trail length is based on speed
-      const speedFactor = p.map(this.velocity.mag(), 0, this.maxSpeed, 0, 1);
-      this.trailLength = Math.max(3, Math.floor(speedFactor * 8)); // Minimum 3, maximum 8 when not transitioning
-    }
-
-    // Keep trail at calculated length
+    // Keep trail at specified length
     if (this.trail.length > this.trailLength) {
-      this.trail.splice(0, this.trail.length - this.trailLength);
+      this.trail.shift(); // Remove oldest position
     }
 
     // Normal update logic
@@ -121,15 +110,12 @@ export class Particle {
   }
 
   display(p: p5, config: AnimationConfig) {
-    // Draw the trail only if we have enough points
+    // Draw the trail
     if (this.trail.length > 1) {
       for (let i = 0; i < this.trail.length - 1; i++) {
         // Calculate alpha based on position in the trail
         const alpha = p.map(i, 0, this.trail.length - 1, 10, 150);
-        
-        // Trail size should be smaller for short trails
-        const sizeFactor = p.map(this.trail.length, 3, this.maxTrailLength, 0.3, 1.5);
-        const trailSize = p.map(i, 0, this.trail.length - 1, this.size * 0.5, this.size * sizeFactor);
+        const trailSize = p.map(i, 0, this.trail.length - 1, this.size * 0.5, this.size * 1.5);
 
         // Draw trail segment with gradient effect
         p.noStroke();
