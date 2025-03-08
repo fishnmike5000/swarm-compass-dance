@@ -22,22 +22,23 @@ const TransitionButton: React.FC<TransitionButtonProps> = ({
       disabled={!isAnimationReady}
       className={cn(
         'transition-button relative flex items-center gap-2 z-10',
-        'bg-black/20 backdrop-blur-sm px-4 py-2 rounded-full',
-        'hover:bg-black/30 transition-all duration-300',
-        'border border-white/20 text-white',
-        'animate-fade-in opacity-0',
+        'bg-white/20 backdrop-blur-sm px-6 py-3 rounded-full',
+        'hover:bg-white/30 transition-all duration-300',
+        'border border-white/40 text-white font-medium',
+        'shadow-lg shadow-black/20',
+        'animate-pulse-subtle',
         !isAnimationReady && 'opacity-50 cursor-not-allowed',
         className
       )}
       aria-label={isCompassMode ? 'Return to flow field' : 'Access Now'}
     >
-      <span className="relative z-10">
+      <span className="relative z-10 text-white text-base">
         {isCompassMode ? 'Return to Flow' : 'Access Now'}
       </span>
       {isCompassMode ? (
         <ArrowRight className="w-4 h-4 relative z-10" />
       ) : (
-        <Sparkles className="w-4 h-4 relative z-10" />
+        <Sparkles className="w-5 h-5 relative z-10" />
       )}
     </button>
   );
