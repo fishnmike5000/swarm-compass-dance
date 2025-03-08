@@ -33,22 +33,17 @@ const SignUp = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-white">Email</Label>
-              <Input id="email" type="email" placeholder="you@example.com" className="bg-white/20 border-white/30 text-white placeholder:text-white/50" />
+              <Label htmlFor="email" className="text-white">Work Email</Label>
+              <Input id="email" type="email" placeholder="you@company.com" className="bg-white/20 border-white/30 text-white placeholder:text-white/50" />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-white">Password</Label>
-              <Input id="password" type="password" placeholder="Create a password" className="bg-white/20 border-white/30 text-white placeholder:text-white/50" />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="company" className="text-white">Company (Optional)</Label>
-              <Input id="company" placeholder="Your organization" className="bg-white/20 border-white/30 text-white placeholder:text-white/50" />
+              <Label htmlFor="business" className="text-white">Business Name</Label>
+              <Input id="business" placeholder="Your organization" className="bg-white/20 border-white/30 text-white placeholder:text-white/50" />
             </div>
             
             <Button type="submit" className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white">
-              Create Account
+              Get in Touch
             </Button>
           </form>
           
