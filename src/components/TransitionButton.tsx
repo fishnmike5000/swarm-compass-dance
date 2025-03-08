@@ -26,7 +26,7 @@ const TransitionButton: React.FC<TransitionButtonProps> = ({
         'hover:bg-white/30 transition-all duration-300',
         'border border-white/40 text-white font-medium',
         'shadow-lg shadow-black/20',
-        'animate-pulse-subtle',
+        'slow-flicker-animation',
         !isAnimationReady && 'opacity-50 cursor-not-allowed',
         className
       )}

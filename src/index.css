@@ -102,6 +102,18 @@
   @apply opacity-100 from-blue-500/70 to-indigo-500/70;
 }
 
+/* Slow Flickering Animation for Button */
+@keyframes slow-flicker {
+  0%, 100% { opacity: 1; }
+  25% { opacity: 0.7; }
+  50% { opacity: 0.9; }
+  75% { opacity: 0.8; }
+}
+
+.slow-flicker-animation {
+  animation: slow-flicker 8s ease-in-out infinite;
+}
+
 /* Animation fade-up for content */
 .fade-up {
   animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
@@ -123,4 +135,3 @@
 .delay-3 { animation-delay: 0.3s; }
 .delay-4 { animation-delay: 0.4s; }
 .delay-5 { animation-delay: 0.5s; }
-
