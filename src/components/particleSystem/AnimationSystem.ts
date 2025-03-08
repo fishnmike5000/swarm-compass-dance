@@ -1,4 +1,3 @@
-
 import p5 from 'p5';
 import { Particle } from './Particle';
 import { generateFlowField, generateCompassPoints } from './fieldUtils';
@@ -46,7 +45,7 @@ export class AnimationSystem {
     // Initialize flow field
     this.flowField = generateFlowField(this.p, this.config);
     
-    // Create compass points
+    // Create square points
     this.compassPoints = generateCompassPoints(this.p, this.config);
     
     // Create particles
@@ -80,21 +79,32 @@ export class AnimationSystem {
       const particle = this.particles[i];
       
       if (this.isTransitioning) {
-        // During transition, gradually move towards compass formation
+        // During transition, gradually move towards square formation
         const progress = (this.currentFrame - this.transitionStartFrame) / this.config.transitionDuration;
-        if (progress <= 1 && i < this.compassPoints.length) {
-          particle.targetPosition = this.compassPoints[i];
-          particle.moveToTarget(this.p, this.currentFrame);
+        if (progress <= 1) {
+          // First 4 particles go to the square corners
+          if (i < 4) {
+            particle.targetPosition = this.compassPoints[i];
+            particle.moveToTarget(this.p, this.currentFrame);
+          } else {
+            // Other particles move randomly
+            particle.followFlowField(this.p, this.flowField, this.config);
+            particle.edges(this.p);
+          }
         }
       } else if (!isCompassMode) {
         // In flow field mode
         particle.followFlowField(this.p, this.flowField, this.config);
         particle.edges(this.p);
       } else {
-        // In full compass mode
-        if (i < this.compassPoints.length) {
+        // In full square mode
+        if (i < 4) {
           particle.targetPosition = this.compassPoints[i];
           particle.moveToTarget(this.p, this.currentFrame);
+        } else {
+          // Other particles continue to move freely
+          particle.followFlowField(this.p, this.flowField, this.config);
+          particle.edges(this.p);
         }
       }
       
@@ -107,7 +117,7 @@ export class AnimationSystem {
     // Recalculate flow field
     this.flowField = generateFlowField(this.p, this.config);
     
-    // Recalculate compass points
+    // Recalculate square points
     this.compassPoints = generateCompassPoints(this.p, this.config);
   }
 
@@ -115,12 +125,40 @@ export class AnimationSystem {
     this.isTransitioning = true;
     this.transitionStartFrame = this.currentFrame;
     
-    // Shuffle particles to avoid bias in compass formation
-    this.particles = [...this.particles].sort(() => Math.random() - 0.5);
+    // Make sure the first 4 particles are the best candidates to form the square corners
+    // Sort particles based on their current positions to find ones closest to the target positions
     
-    // Ensure all particles have a reference to a compass point, with priority to the
-    // cardinal and intercardinal points
-    for (let i = 0; i < Math.min(this.particles.length, this.compassPoints.length); i++) {
+    // Temporary array of particles with their distances to targets
+    const particlesWithDistances = this.particles.map((particle, index) => {
+      // Find the closest corner point to this particle
+      let minDistance = Number.MAX_VALUE;
+      let closestCornerIndex = 0;
+      
+      // Only consider the 4 corner points
+      for (let i = 0; i < 4; i++) {
+        const cornerPoint = this.compassPoints[i];
+        const dist = p5.Vector.dist(particle.position, cornerPoint);
+        if (dist < minDistance) {
+          minDistance = dist;
+          closestCornerIndex = i;
+        }
+      }
+      
+      return {
+        particle,
+        distance: minDistance,
+        cornerIndex: closestCornerIndex
+      };
+    });
+    
+    // Sort by distance
+    particlesWithDistances.sort((a, b) => a.distance - b.distance);
+    
+    // Create a new sorted array of particles
+    this.particles = particlesWithDistances.map(item => item.particle);
+    
+    // Assign the corner targets to the first 4 particles
+    for (let i = 0; i < 4; i++) {
       this.particles[i].targetPosition = this.compassPoints[i];
     }
   }

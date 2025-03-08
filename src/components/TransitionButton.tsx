@@ -26,10 +26,10 @@ const TransitionButton: React.FC<TransitionButtonProps> = ({
         !isAnimationReady && 'opacity-50 cursor-not-allowed',
         className
       )}
-      aria-label={isCompassMode ? 'Return to flow field' : 'Form compass'}
+      aria-label={isCompassMode ? 'Return to flow field' : 'Form square'}
     >
       <span className="relative z-10">
-        {isCompassMode ? 'Return to Flow' : 'Form Compass'}
+        {isCompassMode ? 'Return to Flow' : 'Form Square'}
       </span>
       {isCompassMode ? (
         <RotateCw className="w-4 h-4 relative z-10" />

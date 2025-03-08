@@ -28,11 +28,11 @@ const Index = () => {
         <div className="max-w-xl w-full text-center">
           <div className="space-y-6">
             <h1 className="text-4xl md:text-5xl font-light text-white tracking-tight fade-up delay-0">
-              <span className="font-normal">Flow</span>Compass
+              <span className="font-normal">Flow</span>Square
             </h1>
             
             <p className="text-white/80 max-w-md mx-auto fade-up delay-1">
-              An elegant particle system that transitions from organic flow to structured formation with mathematical precision.
+              An elegant particle system that transitions from organic flow to a structured square formation.
             </p>
             
             <div className="flex justify-center pt-4 fade-up delay-2">
@@ -49,7 +49,7 @@ const Index = () => {
       
       {/* Footer Attribution */}
       <div className="absolute bottom-6 left-0 right-0 text-center text-white/50 text-sm fade-up delay-4">
-        <p>Minimalist design inspired by mathematical beauty</p>
+        <p>Minimalist design with simple geometric patterns</p>
       </div>
     </div>
   );

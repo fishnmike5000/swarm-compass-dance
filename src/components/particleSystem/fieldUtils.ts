@@ -21,54 +21,24 @@ export function generateFlowField(p: p5, config: AnimationConfig): p5.Vector[] {
 export function generateCompassPoints(p: p5, config: AnimationConfig): p5.Vector[] {
   const compassPoints: p5.Vector[] = [];
   
-  // Center of the compass
+  // Center of the screen
   const centerX = p.width / 2;
   const centerY = p.height / 2;
   
-  // Radius of the compass
-  const radius = Math.min(p.width, p.height) * 0.25;
-  const smallRadius = radius * 0.5;
+  // Size of the square - using a percentage of the smaller dimension
+  const size = Math.min(p.width, p.height) * 0.3;
   
-  // Cardinal points (N, E, S, W)
-  const cardinalCount = 4;
-  for (let i = 0; i < cardinalCount; i++) {
-    const angle = (i * p.TWO_PI) / cardinalCount - p.PI / 4;
-    const x = centerX + p.cos(angle) * radius;
-    const y = centerY + p.sin(angle) * radius;
-    compassPoints.push(p.createVector(x, y));
-  }
+  // Four corners of a square
+  compassPoints.push(p.createVector(centerX - size/2, centerY - size/2)); // Top left
+  compassPoints.push(p.createVector(centerX + size/2, centerY - size/2)); // Top right
+  compassPoints.push(p.createVector(centerX + size/2, centerY + size/2)); // Bottom right
+  compassPoints.push(p.createVector(centerX - size/2, centerY + size/2)); // Bottom left
   
-  // Intercardinal points (NE, SE, SW, NW)
-  const intercardinalCount = 4;
-  for (let i = 0; i < intercardinalCount; i++) {
-    const angle = (i * p.TWO_PI) / intercardinalCount;
-    const x = centerX + p.cos(angle) * smallRadius;
-    const y = centerY + p.sin(angle) * smallRadius;
-    compassPoints.push(p.createVector(x, y));
-  }
-  
-  // Center point
-  compassPoints.push(p.createVector(centerX, centerY));
-  
-  // Additional decorative points
-  const decorativeCount = Math.min(config.particleCount - compassPoints.length, 40);
-  const decorativeAngles = 8;
-  const decorativeRadii = decorativeCount / decorativeAngles;
-  
-  for (let i = 0; i < decorativeAngles; i++) {
-    const angle = (i * p.TWO_PI) / decorativeAngles;
-    for (let j = 1; j <= decorativeRadii; j++) {
-      const r = (j / decorativeRadii) * radius * 1.2;
-      const x = centerX + p.cos(angle) * r;
-      const y = centerY + p.sin(angle) * r;
-      compassPoints.push(p.createVector(x, y));
-    }
-  }
-  
-  // If we need more points, add them randomly around the compass
+  // If we need more points (for other particles that aren't part of the square)
+  // distribute them randomly
   while (compassPoints.length < config.particleCount) {
     const angle = p.random(p.TWO_PI);
-    const r = p.random(radius * 1.3);
+    const r = p.random(size * 1.5);
     const x = centerX + p.cos(angle) * r;
     const y = centerY + p.sin(angle) * r;
     compassPoints.push(p.createVector(x, y));
