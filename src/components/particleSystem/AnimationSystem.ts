@@ -1,3 +1,4 @@
+
 import p5 from 'p5';
 import { Particle } from './Particle';
 import { generateFlowField, generateCompassPoints } from './fieldUtils';
@@ -80,13 +81,19 @@ export class AnimationSystem {
       this.stopTransition();
     }
     
+    // Calculate transition progress once for all particles
+    let transitionProgress = 0;
+    if (this.isTransitioning) {
+      transitionProgress = Math.min(1, (this.currentFrame - this.transitionStartFrame) / this.config.transitionDuration);
+    }
+    
     // Update and display particles
     for (let i = 0; i < this.particles.length; i++) {
       const particle = this.particles[i];
       
       if (this.isTransitioning) {
         // During transition, all particles move toward center
-        const progress = (this.currentFrame - this.transitionStartFrame) / this.config.transitionDuration;
+        const progress = transitionProgress;
         
         if (progress <= 1) {
           // All particles zip toward the center
@@ -133,7 +140,8 @@ export class AnimationSystem {
         }
       }
       
-      particle.update(this.p, this.currentFrame);
+      // Pass transition information to the update method
+      particle.update(this.p, this.currentFrame, this.isTransitioning, transitionProgress);
       particle.display(this.p, this.config);
     }
   }
