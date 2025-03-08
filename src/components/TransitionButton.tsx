@@ -38,10 +38,10 @@ const TransitionButton: React.FC<TransitionButtonProps> = ({
         !isAnimationReady && 'opacity-50 cursor-not-allowed',
         className
       )}
-      aria-label="Access Now"
+      aria-label="Apply Here"
     >
       <span className="relative z-10 text-white text-base">
-        Access Now
+        Apply Here
       </span>
       <Sparkles className="w-5 h-5 relative z-10" />
     </button>
