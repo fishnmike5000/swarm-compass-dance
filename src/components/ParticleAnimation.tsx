@@ -300,10 +300,10 @@ const ParticleAnimation: React.FC<ParticleAnimationProps> = ({ isCompassMode, on
         isTransitioning = false;
         
         // Clear target positions
-        particles.forEach(p => {
-          p.targetPosition = null;
-          // Reset velocities to be more random
-          p.velocity = p.createVector(
+        particles.forEach(particle => {
+          particle.targetPosition = null;
+          // Reset velocities to be more random using p5 instance
+          particle.velocity = p.createVector(
             p.random(-config.minVelocity, config.minVelocity),
             p.random(-config.minVelocity, config.minVelocity)
           );
