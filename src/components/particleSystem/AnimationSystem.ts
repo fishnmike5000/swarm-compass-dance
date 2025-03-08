@@ -19,7 +19,7 @@ export class AnimationSystem {
     this.p = p;
     this.onReadyCallback = onReady;
     this.centerPoint = p.createVector(0, 0); // Will be properly set in setup
-
+    
     // Animation configuration - will be initialized in setup
     this.config = {
       particleCount: 0, // Will be set based on screen size
@@ -47,8 +47,9 @@ export class AnimationSystem {
     // Initialize flow field
     this.flowField = generateFlowField(this.p, this.config);
     
-    // Set center point
-    this.centerPoint = this.p.createVector(this.p.width / 2, this.p.height / 2);
+    // Set center point to the vertical center but slightly higher horizontally
+    // This positions it where the button will be
+    this.centerPoint = this.p.createVector(this.p.width / 2, this.p.height / 2 - this.p.height * 0.06);
     
     // Create square points
     this.compassPoints = generateCompassPoints(this.p, this.config);
@@ -139,7 +140,7 @@ export class AnimationSystem {
 
   windowResized() {
     // Update center point
-    this.centerPoint = this.p.createVector(this.p.width / 2, this.p.height / 2);
+    this.centerPoint = this.p.createVector(this.p.width / 2, this.p.height / 2 - this.p.height * 0.06);
     
     // Recalculate flow field
     this.flowField = generateFlowField(this.p, this.config);

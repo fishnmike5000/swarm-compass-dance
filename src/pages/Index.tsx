@@ -25,8 +25,8 @@ const Index = () => {
       
       {/* Content Overlay */}
       <div className="absolute inset-0 flex flex-col items-center justify-center z-10 pointer-events-none p-6">
-        <div className="max-w-xl w-full text-center">
-          <div className="space-y-6">
+        <div className="max-w-xl w-full text-center transform -translate-y-16">
+          <div className="space-y-4">
             <h1 className="text-4xl md:text-5xl font-light text-white tracking-tight fade-up delay-0">
               <span className="font-normal">AI Readiness</span> Audit
             </h1>
