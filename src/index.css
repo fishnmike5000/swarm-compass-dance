@@ -144,6 +144,24 @@
   animation: blurAway 2s forwards;
 }
 
+/* Blur-in animation for sign up form */
+@keyframes blurIn {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+  }
+}
+
+.blur-in {
+  animation: blurIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
 /* Delay classes for staggered animations */
 .delay-0 { animation-delay: 0s; }
 .delay-1 { animation-delay: 0.1s; }

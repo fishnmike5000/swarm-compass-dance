@@ -17,7 +17,7 @@ const SignUp = () => {
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-900 to-slate-900 flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-md blur-in">
         <Card className="p-6 shadow-xl bg-white/10 backdrop-blur-md border border-white/20">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-light tracking-tight text-white">

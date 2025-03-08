@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { ArrowRight, Sparkles } from 'lucide-react';
 
@@ -16,9 +16,16 @@ const TransitionButton: React.FC<TransitionButtonProps> = ({
   className,
   isAnimationReady
 }) => {
+  const [isBlurred, setIsBlurred] = useState(false);
+
+  const handleClick = () => {
+    setIsBlurred(true);
+    onClick();
+  };
+  
   return (
     <button
-      onClick={onClick}
+      onClick={handleClick}
       disabled={!isAnimationReady}
       className={cn(
         'transition-button relative flex items-center gap-2 z-10',
@@ -27,6 +34,7 @@ const TransitionButton: React.FC<TransitionButtonProps> = ({
         'border border-white/40 text-white font-medium',
         'shadow-lg shadow-black/20',
         'slow-flicker-animation',
+        isBlurred && 'blur-away',
         !isAnimationReady && 'opacity-50 cursor-not-allowed',
         className
       )}
